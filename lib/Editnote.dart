@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:notes/DataBaseHelper.dart';
+import 'DataBaseHelper.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'dart:ui';
 import 'Drawer.dart';
-import 'package:notes/Note.dart';
-import 'Drawer.dart';
-import 'package:notes/NoteView.dart';
-import 'main.dart';
+import 'Note.dart';
+import 'NoteView.dart';
 
 class EditNote extends StatefulWidget {
   final int turn;
