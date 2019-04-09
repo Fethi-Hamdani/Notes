@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notes/images.dart';
 import 'Editnote.dart';
-import 'main.dart';
 import 'dart:io';
-import 'package:notes/home.dart';
-import 'dart:ui';
-import 'package:notes/NoteView.dart';
+import 'NoteView.dart';
 
 class DrawerOnly extends StatefulWidget {
   final int pagenum;

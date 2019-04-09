@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:intl/intl.dart';
-import 'package:notes/DataBaseHelper.dart';
+import 'DataBaseHelper.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'dart:ui';
 import 'Editnote.dart';
 import 'Drawer.dart';
-import 'package:notes/Note.dart';
+import 'Note.dart';
 
 class MyNotesPage extends StatefulWidget {
   MyNotesPage();
@@ -18,22 +16,25 @@ class MyNotesPage extends StatefulWidget {
 class _MyNotesPageState extends State<MyNotesPage> {
   int notesview = 2;
   IconData con = Icons.view_stream;
+
   _MyNotesPageState();
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Note> noteList;
 
   void updateListView() {
-
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();
     dbFuture.then((database) {
       Future<List<Note>> noteListFuture = databaseHelper.getNoteList();
       noteListFuture.then((noteList) {
         setState(() {
-          if(noteList.length==0){
-            databaseHelper.insertNote(new Note('Ill be alwasy here to cover your back', 'anytime ', 'Colors.blue'));
-            updateListView();}
-          else
+          if (noteList.length == 0) {
+            databaseHelper.insertNote(new Note(
+                'Ill be alwasy here to cover your back',
+                'anytime ',
+                'Colors.blue'));
+            updateListView();
+          } else
             this.noteList = noteList;
         });
       });
@@ -41,19 +42,10 @@ class _MyNotesPageState extends State<MyNotesPage> {
   }
 
   void _start() {
-
     setState(() {
-
-
-
-      precacheImage(
-          AssetImage(
-              "assets/images/vors.jpg"
-              ) ,context
-          );
+      precacheImage(AssetImage("assets/images/vors.jpg"), context);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +54,6 @@ class _MyNotesPageState extends State<MyNotesPage> {
       noteList = List<Note>();
 
       updateListView();
-
     }
     return Scaffold(
       drawer: new DrawerOnly(),
@@ -72,9 +63,9 @@ class _MyNotesPageState extends State<MyNotesPage> {
             elevation: 15,
             backgroundColor: Color.fromARGB(255, 71, 199, 254),
             title: Text('Home',
-                            style: TextStyle(
-                              color: Colors.white,
-                              )),
+                style: TextStyle(
+                  color: Colors.white,
+                )),
             iconTheme: new IconThemeData(color: Colors.white),
             floating: true,
             actions: <Widget>[
@@ -82,10 +73,9 @@ class _MyNotesPageState extends State<MyNotesPage> {
                 icon: Icon(
                   con,
                   color: Colors.white,
-                  ),
+                ),
                 onPressed: () {
                   setState(() {
-
                     if (notesview == 2) {
                       notesview = 1;
                       con = Icons.view_quilt;
@@ -95,44 +85,45 @@ class _MyNotesPageState extends State<MyNotesPage> {
                     }
                   });
                 },
-                ),
+              ),
             ],
-            ),
+          ),
 
           // new Container(),
           SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: notesview,
-                ),
-              delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                  if (index < noteList.length) {
-                    EdgeInsets.all(10);
-                    return new CustomCard(noteList[(noteList.length-1) - index ] );
-                  }
-                },)
               ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (index < noteList.length - 1) {
+                    EdgeInsets.all(10);
+                    return new CustomCard(
+                        noteList[(noteList.length - 1) - index]);
+                  }
+                },
+              )),
         ],
-        ),
+      ),
 
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(255, 71, 199, 254),
         onPressed: () {
           Navigator.pushReplacement(context,
-                                        new MaterialPageRoute(builder: (context) => EditNote(1)));
+              new MaterialPageRoute(builder: (context) => EditNote(1)));
         },
         child: Icon(
           Icons.queue,
           color: Colors.white,
-          ),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-      );
+        ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
-
 }
 
 class CustomCard extends StatefulWidget {
   CustomCard(this.note);
+
   Note note;
 
   @override
@@ -140,27 +131,24 @@ class CustomCard extends StatefulWidget {
 }
 
 class _CustomCardState extends State<CustomCard> {
-
   double font = 13;
 
   @override
   Widget build(BuildContext context) {
     return new Card(
-
       elevation: 2,
       margin: EdgeInsets.all(5),
       child: RaisedButton(
-
         splashColor: Colors.blueAccent,
-        color: new Color(int.parse(widget.note.description.split('(0x')[1].split(')')[0] ,radix: 16)),
+        color: new Color(int.parse(
+            widget.note.description.split('(0x')[1].split(')')[0],
+            radix: 16)),
         onPressed: () {
           Navigator.pushReplacement(
               context,
               new MaterialPageRoute(
-                  builder: (context) =>
-                      EditNote(2,widget.note)));
+                  builder: (context) => EditNote(2, widget.note)));
         },
-
         padding: EdgeInsets.only(left: 5, top: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -172,11 +160,11 @@ class _CustomCardState extends State<CustomCard> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 new Text("${widget.note.title}",
-                             style: new TextStyle(
-                               fontSize: font,
-                               )),
+                    style: new TextStyle(
+                      fontSize: font,
+                    )),
               ],
-              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -187,21 +175,17 @@ class _CustomCardState extends State<CustomCard> {
                   child: Align(
                     alignment: Alignment(1, 0),
                     child: Text(widget.note.date,
-                                    style: new TextStyle(
-                                      fontSize: font,
-                                      color: Colors.black54,
-                                      )),
-                    ),
+                        style: new TextStyle(
+                          fontSize: font,
+                          color: Colors.black54,
+                        )),
                   ),
+                ),
               ],
-              ),
+            ),
           ],
-          ),
         ),
-      );
-
+      ),
+    );
   }
-
-
-
 }
