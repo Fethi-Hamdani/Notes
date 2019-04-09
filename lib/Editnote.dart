@@ -1,10 +1,15 @@
-import 'package:flutter/material.dart';
-import 'DataBaseHelper.dart';
-import 'package:intl/intl.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:test/DataBaseHelper.dart';
+import 'package:test/Note.dart';
+import 'package:test/NoteView.dart';
+import 'package:sqflite/sqlite_api.dart';
+
 import 'Drawer.dart';
-import 'Note.dart';
-import 'NoteView.dart';
+import 'Drawer.dart';
+import 'main.dart';
 
 class EditNote extends StatefulWidget {
   final int turn;
@@ -218,6 +223,16 @@ class _clrbtn extends State<clrbtn1>{
   _clrbtn(this.c1, this.c2);
 
   bool on = false;
+  void fill1(){
+
+    btns.clear();
+    for(int i = 0 ; i<clrbtns.length-1 ; i++)
+    {
+      btns.add(new clrbtn1(Colors.white,clrbtns[i]));
+
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +249,7 @@ class _clrbtn extends State<clrbtn1>{
           onPressed: () {
             setState(() {
               if (!on) {
-                fill();
+                fill1();
                 c1 = c2;
                 notecolor = c1;
                 c2 = Colors.white;
@@ -255,3 +270,4 @@ class _clrbtn extends State<clrbtn1>{
   
 
 }
+

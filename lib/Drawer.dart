@@ -1,7 +1,13 @@
-import 'package:flutter/material.dart';
-import 'Editnote.dart';
 import 'dart:io';
-import 'NoteView.dart';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:test/NoteView.dart';
+import 'package:test/home.dart';
+import 'package:test/images.dart';
+
+import 'Editnote.dart';
+import 'main.dart';
 
 class DrawerOnly extends StatefulWidget {
   final int pagenum;
@@ -25,17 +31,26 @@ class _DrawerOnlyState extends State<DrawerOnly> {
               decoration: BoxDecoration(
                 image: DecorationImage(image: c, fit: BoxFit.fill)),
           ),
-          new ListTile(
+         /* new ListTile(
             leading: Icon(Icons.home),
             title: new Text("Home"),
             onTap: () {
               Navigator.pushReplacement(
                   ctxt,
                   new MaterialPageRoute(
+                      builder: (ctxt) => MyHomePage()));
+            },
+            ),*/
+          new ListTile(
+            leading: Icon(Icons.home),
+            title: new Text("My notes"),
+            onTap: () {
+              Navigator.pushReplacement(
+                  ctxt,
+                  new MaterialPageRoute(
                       builder: (ctxt) => MyNotesPage()));
             },
-            ),
-
+          ),
           new ListTile(
             leading: Icon(Icons.add_box),
             title: new Text("ADD Notes"),
