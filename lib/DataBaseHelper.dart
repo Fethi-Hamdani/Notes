@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:test/Note.dart';
+import 'package:notes/Note.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,8 +13,10 @@ class DatabaseHelper {
   String noteTable = 'note_table';
   String colId = 'id';
   String colTitle = 'title';
+  String colNote = 'note';
   String colDescription = 'description';
   String colDate = 'date';
+  String colPin = 'pin' ;
 
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -46,8 +48,8 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
 
-    await db.execute('CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, '
-                         '$colDescription TEXT, $colDate TEXT)');
+    await db.execute('CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, $colNote TEXT, '
+                         '$colDescription TEXT, $colDate TEXT ,$colPin TEXT)');
   }
 
   // Fetch Operation: Get all note objects from database

@@ -2,9 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test/NoteView.dart';
-import 'package:test/home.dart';
-import 'package:test/images.dart';
+import 'package:notes/NoteView.dart';
+import 'package:notes/home.dart';
+import 'package:notes/images.dart';
 
 import 'Editnote.dart';
 import 'main.dart';
@@ -25,52 +25,81 @@ class _DrawerOnlyState extends State<DrawerOnly> {
   Widget build(BuildContext ctxt) {
 
     return new Drawer(
-      child: new ListView(
-        children: <Widget>[
-          new UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                image: DecorationImage(image: c, fit: BoxFit.fill)),
-          ),
-         /* new ListTile(
-            leading: Icon(Icons.home),
-            title: new Text("Home"),
-            onTap: () {
-              Navigator.pushReplacement(
-                  ctxt,
-                  new MaterialPageRoute(
-                      builder: (ctxt) => MyHomePage()));
-            },
-            ),*/
-          new ListTile(
-            leading: Icon(Icons.home),
-            title: new Text("My notes"),
-            onTap: () {
-              Navigator.pushReplacement(
-                  ctxt,
-                  new MaterialPageRoute(
-                      builder: (ctxt) => MyNotesPage()));
-            },
-          ),
-          new ListTile(
-            leading: Icon(Icons.add_box),
-            title: new Text("ADD Notes"),
-            onTap: () {
-              Navigator.pushReplacement(
-                  ctxt,
-                  new MaterialPageRoute(
-                      builder: (ctxt) => EditNote(1)));
-            },
-          ),
-          new Divider(color: Colors.white, height: 260 ,),
-          new Divider( height: 20 ,),
-          new ListTile(
+      elevation: 15,
+      child: Container(
+        decoration: BoxDecoration( gradient:LinearGradient(colors: [ Colors.blue[800],Colors.blue ,Colors.blue[900]] ,begin: Alignment.bottomLeft , end : Alignment.topRight) ),
 
-              leading: Icon(Icons.exit_to_app),
-              title: new Text("Exit"),
+        child: new ListView(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: c, fit: BoxFit.fill)),
+            ),
+           /* new ListTile(
+              leading: Icon(Icons.home),
+              title: new Text("Home"),
               onTap: () {
-                exit(0);
-              }),
-        ],
+                Navigator.pushReplacement(
+                    ctxt,
+                    new MaterialPageRoute(
+                        builder: (ctxt) => MyHomePage()));
+              },
+              ),*/
+            new ListTile(
+
+              leading: Icon(Icons.home, color: Colors.grey[800],),
+              title: new Text("My notes" , style: TextStyle(color: Colors.white , fontSize: 17),),
+              onTap: () {
+                Navigator.pushReplacement(
+                    ctxt,
+                    new MaterialPageRoute(
+                        builder: (ctxt) => MyNotesPage()));
+              },
+            ),
+            new ListTile(
+              leading: Icon(Icons.add_box,color: Colors.grey[800],),
+              title: new Text("ADD Notes",style: TextStyle(color: Colors.white , fontSize: 17)),
+              onTap: () {
+                Navigator.pushReplacement(
+                    ctxt,
+                    new MaterialPageRoute(
+                        builder: (ctxt) => EditNote(1)));
+              },
+            ),
+            new ListTile(
+
+                leading: Icon(Icons.exit_to_app,color: Colors.grey[800],),
+                title: new Text("Exit",style: TextStyle(color: Colors.white , fontSize: 17)),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      // return object of type Dialog
+                      return AlertDialog(
+                        title: new Text("Exit App"),
+                        content: new Text("Are you sure you want to exit ?",style: TextStyle(fontSize:  18),),
+                        actions: <Widget>[
+                          // usually buttons at the bottom of the dialog
+                          new FlatButton(
+                            child: new Text("Cancel",style: TextStyle(fontSize:  18),),
+                            onPressed: () {
+                              Navigator.of(context).pop();Navigator.of(context).pop();
+                            },
+                          ),
+                          new FlatButton(
+                            child: new Text("Yes" , style: TextStyle(fontSize:  18),),
+                            onPressed: () {
+                              exit(0);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                }),
+          ],
+        ),
       ),
     );
   }

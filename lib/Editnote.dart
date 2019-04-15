@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:test/DataBaseHelper.dart';
-import 'package:test/Note.dart';
-import 'package:test/NoteView.dart';
+import 'package:notes/DataBaseHelper.dart';
+import 'package:notes/Note.dart';
+import 'package:notes/NoteView.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 import 'Drawer.dart';
@@ -24,30 +24,19 @@ var now = new DateTime.now();
 var formatter = new DateFormat('yyyy-MM-dd' + ' At ' + 'H:m');
 Color notecolor = Colors.white;
  List clrbtns = [
-    Color.fromARGB(255, 254, 212, 71),
-    Color.fromARGB(255, 71, 254, 102),
-    Color.fromARGB(255, 87, 148, 254),
-    Color.fromARGB(255, 253, 136, 47),
-    Color.fromARGB(255, 254, 71, 242),
-    Color.fromARGB(255, 71, 199, 254),
-    Color.fromARGB(255, 16, 254, 24),
-    Color.fromARGB(255, 246, 254, 11),
-    Color.fromARGB(255, 254, 11, 222),
-    Color.fromARGB(255, 11, 254, 254),
+    Color.fromARGB(255, 254, 212, 63 ),
+    Color.fromARGB(255, 71 , 254, 102),
+    Color.fromARGB(255, 87 , 148, 254),
+    Color.fromARGB(255, 253, 136, 47 ),
+    Color.fromARGB(255, 254, 71 , 242),
+    Color.fromARGB(255, 71 , 199, 254),
+    Color.fromARGB(255, 16 , 254,  24),
+    Color.fromARGB(255, 246, 254, 11 ),
+    Color.fromARGB(255, 254, 11 , 222),
+    Color.fromARGB(255, 11 , 254, 254),
     Color.fromARGB(255, 254, 112, 112),
   ];
 
-List btns = new List();
-void fill(){
-
-        btns.clear();
-        for(int i = 0 ; i<clrbtns.length-1 ; i++)
-        {
-          btns.add(new clrbtn1(Colors.white,clrbtns[i]));
-
-        }  
-
-}
 
 class _EditNoteState extends State<EditNote> {
   double font = 15;
@@ -55,29 +44,35 @@ class _EditNoteState extends State<EditNote> {
 
   String btntext = 'Fethi';
   String headertxt;
+  bool pin = false;
   bool lnchbtn = false;
   int noteindex;
 
   
   bool stab = false;
   DatabaseHelper databaseHelper = DatabaseHelper();
- 
+
 
   void handlestart() {
     setState(() {
-        
-      fill();
+
       now = new DateTime.now();
       if (widget.turn == 2) {
         headertxt = "Edit Note";
         btntext = 'Save Changes';
-        _controller.text = widget.note.title;
+         pin = widget.note.pin ? true :false;
+        _controller.text = widget.note.note;
+         title.text = widget.note.title;
         _controller.selection = new TextSelection.fromPosition(
             new TextPosition(offset: _controller.text.length));
+
+        title.selection = new TextSelection.fromPosition(
+            new TextPosition(offset: title.text.length));
         lnchbtn = true;
       } else {
         headertxt = "Add Note";
         btntext = 'Add Note';
+
       }
       if (stab) {
         for (int i = 0; i < clrbtns.length; i++) {
@@ -115,35 +110,71 @@ class _EditNoteState extends State<EditNote> {
   }
 
   TextEditingController _controller = new TextEditingController();
+  TextEditingController title = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     handlestart();
-    return Scaffold(
+    return new WillPopScope(
+      onWillPop: (){
+        setState(() {
+          if (widget.turn != 2) {
+            if (_controller.text.length > 0) {
+              databaseHelper.insertNote(new Note(title.text, _controller.text,
+                  formatter.format(now), notecolor.toString() , pin ));
+            }
+          } else {
+            widget.note.title = title.text;
+            widget.note.pin = pin ;
+            widget.note.note = _controller.text;
+            widget.note.description = notecolor.toString();
+            databaseHelper.updateNote(widget.note);
+          }
+
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(builder: (context) => MyNotesPage()));
+        });
+
+      },
+      child : Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[400],
+        backgroundColor: Colors.blue[900],
         title: Text('$headertxt',
             style: TextStyle(
               color: Colors.white,
             )),
         iconTheme: new IconThemeData(color: Colors.white),
         actions: <Widget>[
+        IconButton(
+              icon: Icon(
+                pin ? Icons.star : Icons.star_border,
+                color: Colors.yellowAccent[200],
+                size: 28,
+              ),
+              onPressed: () {
+                setState(() {
+
+                  widget.turn==2 ? widget.note.pin = !widget.note.pin : pin = !pin;
+              });}),
           deletebtn(),
           IconButton(
             icon: Icon(
               Icons.save,
-              color: Colors.blueAccent,
+              color: Colors.lightBlue[400],
               size: 25,
             ),
             onPressed: () {
               setState(() {
                 if (widget.turn != 2) {
                   if (_controller.text.length > 0) {
-                    databaseHelper.insertNote(new Note(_controller.text,
-                        formatter.format(now), notecolor.toString()));
+                    databaseHelper.insertNote(
+                        new Note(title.text,_controller.text,
+                        formatter.format(now), notecolor.toString(), pin));
                   }
                 } else {
-                  widget.note.title = _controller.text;
+                  widget.note.title = title.text;
+                  widget.note.note = _controller.text;
+                  widget.note.pin = pin ;
                   widget.note.description = notecolor.toString();
                   databaseHelper.updateNote(widget.note);
                 }
@@ -155,8 +186,10 @@ class _EditNoteState extends State<EditNote> {
           ),
         ],
       ),
-      drawer: new DrawerOnly(),
+     drawer: new DrawerOnly(),
       body: new Container(
+        decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.blue[600],Colors.blue[500], Colors.blue[900]],begin:Alignment.topLeft , end:Alignment.bottomRight)),
+
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -165,38 +198,75 @@ class _EditNoteState extends State<EditNote> {
               height: 60,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: btns.length,
+                  itemCount:clrbtns.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return btns[index];
+
+                    bool on = false;
+                    Color c1 = Colors.grey[200], c2 = clrbtns[index];
+                    return Container(
+
+                      decoration: BoxDecoration(color: c1,border: Border.all(color: Colors.blue[900] , width: 2), borderRadius: BorderRadius.all(Radius.circular(30) )),
+                      height: 10,
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.only(top: 5,left: 2),
+                      child: IconButton(
+                          padding: EdgeInsets.only(top: 0, left: 5, right: 5, bottom: 0),
+                          icon: Icon(Icons.blur_on),
+                          color: c2,
+                          iconSize: 45,
+                          onPressed: () {
+                            setState(() {
+                              if (!on) {
+                                c1 = c2;
+                                notecolor = c1;
+                                c2 = Colors.white;
+                                on = !on ;
+                              } else {
+                                c2 = c1;
+                                c1 = Colors.white;
+                                notecolor = c1;
+                                on = !on;
+                              }
+                            });
+                          }),
+                      /* blur_circular
+          blur_on
+          camera*/
+                    );;
                   }),
             ),
-            new Expanded(
-              flex: 1,
-              child: Container(
-                margin: EdgeInsets.only(left: 5, right: 5, top: 8, bottom: 5),
-                padding: EdgeInsets.only(bottom: 2, top: 8, right: 5, left: 5),
-                child: TextField(
-                  maxLines: 24,
-                  controller: _controller,
-                  style: new TextStyle(wordSpacing: 2),
-                  autocorrect: true,
-                  decoration: new InputDecoration(
-                      labelText: "Enter note here",
-                      labelStyle: new TextStyle(fontSize: 16),
-                      contentPadding: const EdgeInsets.only(left: 10, top: 20),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        borderSide:
-                            BorderSide(width: 2, color: Colors.blueAccent),
-                      )
-                      //border:OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20 ) ),borderSide: BorderSide(width: 15),)
+            Opacity(
+              opacity: 0.8,
+              child: new Container(
+                decoration: BoxDecoration( border: Border.all(color: Colors.blue[900] , width: 2), gradient:LinearGradient(colors: [notecolor, Colors.white70 ,notecolor] ,begin: Alignment.topLeft , end : Alignment.bottomRight) , borderRadius: BorderRadius.all(Radius.circular(15))),
+               // color: notecolor,
+                margin: EdgeInsets.only(right: 15 ,left: 15, top: 10 ,bottom: 5),
+
+                height :490,
+                child: Column(
+                  children: <Widget>[
+                    Center(child: Container(  padding: EdgeInsets.only(left: 5),decoration: BoxDecoration(border: Border(left: BorderSide(width: 2,color: Colors.blue[900]))),margin: EdgeInsets.only( top: 10),width: 220 , child: TextField( decoration: InputDecoration.collapsed(hintText: ' Title here'), controller: title, textAlign:TextAlign.justify ,maxLines: 1 , style: new TextStyle(fontSize: 20 , fontWeight: FontWeight.w700 ), )),),
+                    Container(
+                      decoration: BoxDecoration(border: Border(top: BorderSide(width: 2 ,color: Colors.blue[900]))),
+                      margin: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 5),
+                      padding: EdgeInsets.only(bottom: 2, top: 8, right: 5, left: 5),
+                      child: TextField(
+                        decoration: InputDecoration.collapsed(hintText: ' Body here'),
+                        maxLines: null,
+                        controller: _controller,
+                        style: new TextStyle(wordSpacing: 2,fontSize: 18 , fontWeight: FontWeight.w500 ),
+                        autocorrect: false,
+
                       ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -205,69 +275,6 @@ class _EditNoteState extends State<EditNote> {
 }
 
 
-class clrbtn1 extends StatefulWidget {
 
-  Color c1;
-  Color c2;
-  clrbtn1(this.c1, this.c2);
-  @override
-  _clrbtn createState() => _clrbtn(c1 ,c2);
 
-}
-
-class _clrbtn extends State<clrbtn1>{
- 
-
-  Color c1;
-  Color c2;
-  _clrbtn(this.c1, this.c2);
-
-  bool on = false;
-  void fill1(){
-
-    btns.clear();
-    for(int i = 0 ; i<clrbtns.length-1 ; i++)
-    {
-      btns.add(new clrbtn1(Colors.white,clrbtns[i]));
-
-    }
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Container(
-      decoration: BoxDecoration(color: c1,borderRadius: BorderRadius.all(Radius.circular(10) )),
-      height: 10,
-      margin: EdgeInsets.all(2),
-      child: IconButton(
-          padding: EdgeInsets.only(top: 0, left: 5, right: 5, bottom: 0),
-          icon: Icon(Icons.blur_circular),
-          color: c2,
-          iconSize: 45,
-          onPressed: () {
-            setState(() {
-              if (!on) {
-                fill1();
-                c1 = c2;
-                notecolor = c1;
-                c2 = Colors.white;
-                on = true ;
-              } else {
-                c2 = c1;
-                c1 = Colors.white;
-                notecolor = c1;
-                on = false;
-              }
-            });
-          }),
-      /* blur_circular
-          blur_on
-          camera*/
-    );
-  }
-  
-
-}
 

@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test/Editnote.dart';
-import 'package:test/Drawer.dart';
-import 'package:test/NoteView.dart';
+import 'package:notes/Editnote.dart';
+import 'package:notes/Drawer.dart';
+import 'package:notes/NoteView.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
