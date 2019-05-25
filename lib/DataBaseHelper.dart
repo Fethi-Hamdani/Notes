@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:notes/Note.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
@@ -80,7 +79,9 @@ class DatabaseHelper {
     var db = await this.database;
     int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colId = $id');
     return result;
+
   }
+
 
   // Get number of Note objects in database
   Future<int> getCount() async {

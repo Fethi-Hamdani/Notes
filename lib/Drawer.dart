@@ -3,11 +3,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:notes/NoteView.dart';
-import 'package:notes/home.dart';
-import 'package:notes/images.dart';
-
+import 'package:notes/Settings.dart';
+import 'package:notes/Help.dart';
+import 'package:notes/Sharedpref.dart';
 import 'Editnote.dart';
-import 'main.dart';
 
 class DrawerOnly extends StatefulWidget {
   final int pagenum;
@@ -19,23 +18,51 @@ class DrawerOnly extends StatefulWidget {
 }
 
 class _DrawerOnlyState extends State<DrawerOnly> {
-  ImageProvider c = AssetImage("assets/images/vors.jpg") ;
+  ImageProvider c = AssetImage("assets/images/vors.jpg");
+  Color iconcolor;
+  bool DarkTheme ;
+
+  Text title(String s) {
+    return Text(s,
+        style: TextStyle(
+            color: DarkTheme ? Colors.white : Colors.black54, fontSize: 17));
+  }
+
+  @override
+  void initState() {
+    start();
+    super.initState();
+  }
+
+  void start() async {
+    DarkTheme = await SharedPreferencesTest().getDarkThemeStatu() ?? false;
+    if (DarkTheme) {
+      iconcolor = Colors.black;
+    } else {
+      iconcolor = Colors.blue[300];
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext ctxt) {
-
-    return new Drawer(
+    return DarkTheme == null ? Center(child: CircularProgressIndicator(),): new Drawer(
       elevation: 15,
       child: Container(
-        decoration: BoxDecoration( gradient:LinearGradient(colors: [ Colors.blue[800],Colors.blue ,Colors.blue[900]] ,begin: Alignment.bottomLeft , end : Alignment.topRight) ),
-
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: DarkTheme
+                    ? [Colors.blue[800], Colors.blue[800], Colors.blue[700]]
+                    : [Colors.grey[300], Colors.white70],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight)),
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
+              decoration: BoxDecoration(
                   image: DecorationImage(image: c, fit: BoxFit.fill)),
             ),
-           /* new ListTile(
+            /* new ListTile(
               leading: Icon(Icons.home),
               title: new Text("Home"),
               onTap: () {
@@ -46,30 +73,55 @@ class _DrawerOnlyState extends State<DrawerOnly> {
               },
               ),*/
             new ListTile(
-
-              leading: Icon(Icons.home, color: Colors.grey[800],),
-              title: new Text("My notes" , style: TextStyle(color: Colors.white , fontSize: 17),),
+              leading: Icon(
+                Icons.home,
+                color: iconcolor,
+              ),
+              title: title("Home"),
               onTap: () {
-                Navigator.pushReplacement(
-                    ctxt,
-                    new MaterialPageRoute(
-                        builder: (ctxt) => MyNotesPage()));
+                Navigator.pushReplacement(ctxt,
+                    new MaterialPageRoute(builder: (ctxt) => MyNotesPage()));
               },
             ),
             new ListTile(
-              leading: Icon(Icons.add_box,color: Colors.grey[800],),
-              title: new Text("ADD Notes",style: TextStyle(color: Colors.white , fontSize: 17)),
+              leading: Icon(
+                Icons.add_box,
+                color: iconcolor,
+              ),
+              title: title("ADD Notes"),
               onTap: () {
-                Navigator.pushReplacement(
-                    ctxt,
-                    new MaterialPageRoute(
-                        builder: (ctxt) => EditNote(1)));
+                Navigator.pushReplacement(ctxt,
+                    new MaterialPageRoute(builder: (ctxt) => EditNote(1)));
               },
             ),
             new ListTile(
-
-                leading: Icon(Icons.exit_to_app,color: Colors.grey[800],),
-                title: new Text("Exit",style: TextStyle(color: Colors.white , fontSize: 17)),
+              leading: Icon(
+                Icons.help,
+                color: iconcolor,
+              ),
+              title: title("Help"),
+              onTap: () {
+                Navigator.pushReplacement(
+                    ctxt, new MaterialPageRoute(builder: (ctxt) => Help()));
+              },
+            ),
+            new ListTile(
+              leading: Icon(
+                Icons.settings,
+                color: iconcolor,
+              ),
+              title: title("Settings"),
+              onTap: () {
+                Navigator.pushReplacement(
+                    ctxt, new MaterialPageRoute(builder: (ctxt) => Settings()));
+              },
+            ),
+            new ListTile(
+                leading: Icon(
+                  Icons.exit_to_app,
+                  color: iconcolor,
+                ),
+                title: title("Exit"),
                 onTap: () {
                   showDialog(
                     context: context,
@@ -77,17 +129,27 @@ class _DrawerOnlyState extends State<DrawerOnly> {
                       // return object of type Dialog
                       return AlertDialog(
                         title: new Text("Exit App"),
-                        content: new Text("Are you sure you want to exit ?",style: TextStyle(fontSize:  18),),
+                        content: new Text(
+                          "Are you sure you want to exit ?",
+                          style: TextStyle(fontSize: 18),
+                        ),
                         actions: <Widget>[
                           // usually buttons at the bottom of the dialog
                           new FlatButton(
-                            child: new Text("Cancel",style: TextStyle(fontSize:  18),),
+                            child: new Text(
+                              "Cancel",
+                              style: TextStyle(fontSize: 18),
+                            ),
                             onPressed: () {
-                              Navigator.of(context).pop();Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                             },
                           ),
                           new FlatButton(
-                            child: new Text("Yes" , style: TextStyle(fontSize:  18),),
+                            child: new Text(
+                              "Yes",
+                              style: TextStyle(fontSize: 18),
+                            ),
                             onPressed: () {
                               exit(0);
                             },
@@ -96,7 +158,6 @@ class _DrawerOnlyState extends State<DrawerOnly> {
                       );
                     },
                   );
-
                 }),
           ],
         ),
